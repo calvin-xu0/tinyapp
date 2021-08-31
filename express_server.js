@@ -40,7 +40,7 @@ app.get("/urls", (req, res) => {
 app.post("/urls", (req, res) => {
   const genShortURL = generateRandomString();
   urlDatabase[genShortURL] = req.body.longURL;
-  res.redirect(`/urls/${genShortURL}`)
+  res.redirect(`/urls/${genShortURL}`);
 });
 app.get("/urls/new", (req, res) => {
   res.render("urls_new", { username: req.cookies.username });
@@ -55,7 +55,7 @@ app.get("/urls/:shortURL", (req, res) => {
 });
 app.post("/urls/:shortURL", (req, res) => {
   urlDatabase[req.params.shortURL] = req.body.newURL;
-  res.redirect(`/urls/`)
+  res.redirect(`/urls/`);
 });
 app.get("/u/:shortURL", (req, res) => {
   const longURL = urlDatabase[req.params.shortURL];
@@ -72,8 +72,12 @@ app.get("/urls.json", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  res.cookie('username', req.body.username)
-  res.redirect(req.headers.referer)
+  res.cookie('username', req.body.username);
+  res.redirect(req.headers.referer);
+});
+app.post("/logout", (req, res) => {
+  res.clearCookie('username');
+  res.redirect(req.headers.referer);
 });
 
 app.get("/hello", (req, res) => {
