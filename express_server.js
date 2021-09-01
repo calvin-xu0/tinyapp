@@ -39,6 +39,10 @@ function generateRandomString() {
   return randString;
 }
 
+const retrieveUser = (userEmail, userDb) => {
+  return Object.values(userDb).find(user => user.email === userEmail);
+}
+
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
@@ -96,8 +100,18 @@ app.post("/logout", (req, res) => {
 app.get('/register', (req, res) => {
   res.render('register', { username: req.cookies.username })
 });
-// app.post('/register', (req, res) => {
-// });
+app.post('/register', (req, res) => {
+  if (retrieveUser(req.body.email, users)) {
+    return;
+  }
+  const assignedId = generateRandomString();
+  const {email, password} = req.body;
+  users[assignedId] = {id: assignedId, email, password};
+
+  res.cookie('user_id', assignedId);
+  console.log(users)
+  res.redirect('/urls')
+});
 
 app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
