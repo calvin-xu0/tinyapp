@@ -51,7 +51,18 @@ function generateRandomString() {
 
 const retrieveUser = (userEmail, userDb) => {
   return Object.values(userDb).find(user => user.email === userEmail);
-}
+};
+
+const urlsForUser = (id) => {
+  const userURLs = {};
+  for (const shortURL in urlDatabase) {
+    if (urlDatabase[shortURL].userID === id) {
+      userURLs[shortURL] = urlDatabase[shortURL]
+    }
+  }
+  return userURLs;
+};
+
 
 app.get("/", (req, res) => {
   res.send("Hello!");
@@ -59,19 +70,20 @@ app.get("/", (req, res) => {
 
 app.get("/urls", (req, res) => {
   if (!req.cookies.user_id) {
-    return res.redirect('/login');
+    // return res.redirect('/login');
+    res.status(401).send('Log in to view your shortened URLs')
   }
 
-  const userURLs = {};
-  const id = req.cookies.user_id.id;
-  for (const shortURL in urlDatabase) {
-    if (urlDatabase[shortURL].userID === id) {
-      userURLs[shortURL] = urlDatabase[shortURL]
-    }
-  }
+  // const userURLs = {};
+  // const id = req.cookies.user_id.id;
+  // for (const shortURL in urlDatabase) {
+  //   if (urlDatabase[shortURL].userID === id) {
+  //     userURLs[shortURL] = urlDatabase[shortURL]
+  //   }
+  // }
   
   const templateVars = {
-    urls: userURLs,
+    urls: urlsForUser(req.cookies.user_id.id),
     user: req.cookies.user_id
   };
   res.render("urls_index", templateVars);
