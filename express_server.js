@@ -89,13 +89,17 @@ app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
-// app.post("/login", (req, res) => {
-//   res.cookie('username', req.body.username);
-//   res.redirect(req.headers.referer);
-// });
 app.get('/login', (req, res) => {
-  res.render('login');
+  res.render('login', { user: req.cookies.user_id });
 })
+app.post("/login", (req, res) => {
+  const foundUser = retrieveUser(req.body.email, users);
+  if (!foundUser || foundUser.password !== req.body.password) {
+    return res.status(403).send('Invalid credentials');
+  }
+  res.cookie('user_id', foundUser);
+  res.redirect('/urls');
+});
 
 app.post("/logout", (req, res) => {
   res.clearCookie('user_id');
