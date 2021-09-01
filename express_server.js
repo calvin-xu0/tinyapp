@@ -112,6 +112,9 @@ app.post("/urls/:shortURL", (req, res) => {
   res.redirect(`/urls/`);
 });
 app.get("/u/:shortURL", (req, res) => {
+  if (!urlDatabase[req.params.shortURL]) {
+    return res.status(404).send('Invalid short URL');
+  }
   const longURL = urlDatabase[req.params.shortURL].longURL;
   res.redirect(longURL);
 });
