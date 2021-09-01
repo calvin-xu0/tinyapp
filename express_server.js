@@ -50,7 +50,8 @@ app.get("/", (req, res) => {
 app.get("/urls", (req, res) => {
   const templateVars = {
     urls: urlDatabase,
-    username: req.cookies.username
+    // username: req.cookies.username
+    user: req.cookies.user_id
   };
   res.render("urls_index", templateVars);
 });
@@ -60,13 +61,13 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${genShortURL}`);
 });
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new", { username: req.cookies.username });
+  res.render("urls_new", { user: req.cookies.user_id });
 });
 app.get("/urls/:shortURL", (req, res) => {
   const templateVars = {
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL],
-    username: req.cookies.username
+    user: req.cookies.user_id
   };
   res.render("urls_show", templateVars);
 });
@@ -93,12 +94,12 @@ app.post("/login", (req, res) => {
   res.redirect(req.headers.referer);
 });
 app.post("/logout", (req, res) => {
-  res.clearCookie('username');
+  res.clearCookie('user_id');
   res.redirect(req.headers.referer);
 });
 
 app.get('/register', (req, res) => {
-  res.render('register', { username: req.cookies.username })
+  res.render('register', { user: req.cookies.user_id })
 });
 app.post('/register', (req, res) => {
   if (retrieveUser(req.body.email, users)) {
@@ -108,7 +109,7 @@ app.post('/register', (req, res) => {
   const {email, password} = req.body;
   users[assignedId] = {id: assignedId, email, password};
 
-  res.cookie('user_id', assignedId);
+  res.cookie('user_id', users[assignedId]);
   console.log(users)
   res.redirect('/urls')
 });
