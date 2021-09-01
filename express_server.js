@@ -55,11 +55,17 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 app.post("/urls", (req, res) => {
+  if (!req.cookies.user_id) {
+    return res.status(401).send('You must be logged in to shorten URLs')
+  }
   const genShortURL = generateRandomString();
   urlDatabase[genShortURL] = req.body.longURL;
   res.redirect(`/urls/${genShortURL}`);
 });
 app.get("/urls/new", (req, res) => {
+  if (!req.cookies.user_id) {
+    return res.redirect('/login');
+  }
   res.render("urls_new", { user: req.cookies.user_id });
 });
 app.get("/urls/:shortURL", (req, res) => {
