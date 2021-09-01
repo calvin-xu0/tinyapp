@@ -89,10 +89,14 @@ app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
-app.post("/login", (req, res) => {
-  res.cookie('username', req.body.username);
-  res.redirect(req.headers.referer);
-});
+// app.post("/login", (req, res) => {
+//   res.cookie('username', req.body.username);
+//   res.redirect(req.headers.referer);
+// });
+app.get('/login', (req, res) => {
+  res.render('login');
+})
+
 app.post("/logout", (req, res) => {
   res.clearCookie('user_id');
   res.redirect(req.headers.referer);
@@ -105,7 +109,7 @@ app.post('/register', (req, res) => {
   if (retrieveUser(req.body.email, users) || Object.values(req.body).some(entry => entry.length === 0)) {
     return res.status(400).send('Invalid registration fields');
   }
-  
+
   const {email, password} = req.body;
   const assignedId = generateRandomString();
   users[assignedId] = {id: assignedId, email, password};
