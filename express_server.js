@@ -102,11 +102,12 @@ app.get('/register', (req, res) => {
   res.render('register', { user: req.cookies.user_id })
 });
 app.post('/register', (req, res) => {
-  if (retrieveUser(req.body.email, users)) {
-    return;
+  if (retrieveUser(req.body.email, users) || Object.values(req.body).some(entry => entry.length === 0)) {
+    return res.status(400).send('Invalid registration fields');
   }
-  const assignedId = generateRandomString();
+  
   const {email, password} = req.body;
+  const assignedId = generateRandomString();
   users[assignedId] = {id: assignedId, email, password};
 
   res.cookie('user_id', users[assignedId]);
