@@ -118,7 +118,6 @@ app.post('/register', (req, res) => {
   users[assignedId] = {id: assignedId, email, password};
 
   res.cookie('user_id', users[assignedId]);
-  console.log(users)
   res.redirect('/urls')
 });
 
