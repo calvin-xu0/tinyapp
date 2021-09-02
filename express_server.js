@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cookieSession = require('cookie-session')
 const bcrypt = require('bcryptjs');
+const { generateRandomString, retrieveUser, urlsForUser } = require('./helpers')
 const saltRounds = 10;
 const app = express();
 const PORT = 8080; // default port 8080
@@ -37,34 +38,6 @@ const users = {
   }
 }
 
-function generateRandomString() {
-  let randLower = Math.random().toString(36).slice(-6);
-  let randString = "";
-  for (const character of randLower) {
-    if (Number(character) == character || Math.random() > 0.5) {
-      randString += character;
-    } else {
-      randString += character.toUpperCase();
-    }
-  }
-  return randString;
-}
-
-const retrieveUser = (userEmail, userDb) => {
-  return Object.values(userDb).find(user => user.email === userEmail);
-};
-
-const urlsForUser = (id) => {
-  const userURLs = {};
-  for (const shortURL in urlDatabase) {
-    if (urlDatabase[shortURL].userID === id) {
-      userURLs[shortURL] = urlDatabase[shortURL]
-    }
-  }
-  return userURLs;
-};
-
-
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
@@ -75,7 +48,7 @@ app.get("/urls", (req, res) => {
   }
 
   const templateVars = {
-    urls: urlsForUser(req.session.user_id.id),
+    urls: urlsForUser(req.session.user_id.id, urlDatabase),
     user: req.session.user_id
   };
   res.render("urls_index", templateVars);
