@@ -149,9 +149,10 @@ app.get('/login', (req, res) => {
 })
 app.post("/login", (req, res) => {
   const foundUser = retrieveUser(req.body.email, users);
-  if (!foundUser || foundUser.password !== req.body.password) {
+  if (!foundUser || !bcrypt.compareSync(req.body.password, foundUser.password)) {
     return res.status(403).send('Invalid credentials');
   }
+  const userCookie = {}
   res.cookie('user_id', foundUser);
   res.redirect('/urls');
 });
@@ -170,9 +171,9 @@ app.post('/register', (req, res) => {
     return res.status(400).send('Invalid registration fields');
   }
 
-  const {email, plainPassword} = req.body;
+  const {email, password} = req.body;
   const assignedId = generateRandomString();
-  users[assignedId] = {id: assignedId, email, password: bcrypt.hashSync(plainPassword, saltRounds)};
+  users[assignedId] = {id: assignedId, email, password: bcrypt.hashSync(password, saltRounds)};
 
   res.cookie('user_id', users[assignedId]);
   res.redirect('/urls')
