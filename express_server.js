@@ -70,17 +70,8 @@ app.get("/", (req, res) => {
 
 app.get("/urls", (req, res) => {
   if (!req.cookies.user_id) {
-    // return res.redirect('/login');
     res.status(401).send('Log in to view your shortened URLs')
   }
-
-  // const userURLs = {};
-  // const id = req.cookies.user_id.id;
-  // for (const shortURL in urlDatabase) {
-  //   if (urlDatabase[shortURL].userID === id) {
-  //     userURLs[shortURL] = urlDatabase[shortURL]
-  //   }
-  // }
   
   const templateVars = {
     urls: urlsForUser(req.cookies.user_id.id),
@@ -88,6 +79,7 @@ app.get("/urls", (req, res) => {
   };
   res.render("urls_index", templateVars);
 });
+
 app.post("/urls", (req, res) => {
   if (!req.cookies.user_id) {
     return res.status(401).send('You must be logged in to shorten URLs')
@@ -99,15 +91,19 @@ app.post("/urls", (req, res) => {
   };
   res.redirect(`/urls/${genShortURL}`);
 });
+
 app.get("/urls/new", (req, res) => {
   if (!req.cookies.user_id) {
     return res.redirect('/login');
   }
   res.render("urls_new", { user: req.cookies.user_id });
 });
+
 app.get("/urls/:shortURL", (req, res) => {
-  if (req.cookies.user_id.id !== urlDatabase[req.params.shortURL].userID) {
-    return res.redirect('/urls');
+  if (!req.cookies.user_id) {
+    return res.status(401).send('Log in to modify short URLs')
+  } else if (!urlDatabase[req.params.shortURL] || req.cookies.user_id.id !== urlDatabase[req.params.shortURL].userID) {
+    return res.status(403).send('Short URL not found in your list')
   }
   const templateVars = {
     shortURL: req.params.shortURL,
@@ -116,13 +112,18 @@ app.get("/urls/:shortURL", (req, res) => {
   };
   res.render("urls_show", templateVars);
 });
+
 app.post("/urls/:shortURL", (req, res) => {
+  if (!req.cookies.user_id) {
+    return res.status(401).send('Log in to modify short URLs')
+  }
   urlDatabase[req.params.shortURL] = {
     longURL: req.body.newURL,
     userID: req.cookies.user_id.id
   };
   res.redirect(`/urls/`);
 });
+
 app.get("/u/:shortURL", (req, res) => {
   if (!urlDatabase[req.params.shortURL]) {
     return res.status(404).send('Invalid short URL');
@@ -132,7 +133,11 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 app.post("/urls/:shortURL/delete", (req, res) => {
-  // Unrestricted access
+  if (!req.cookies.user_id) {
+    return res.status(401).send('Log in to modify short URLs')
+  } else if (!urlDatabase[req.params.shortURL] || req.cookies.user_id.id !== urlDatabase[req.params.shortURL].userID) {
+    return res.status(403).send('Short URL not found in your list')
+  }
   delete urlDatabase[req.params.shortURL];
   res.redirect(`/urls`);
 });
@@ -161,6 +166,7 @@ app.post("/logout", (req, res) => {
 app.get('/register', (req, res) => {
   res.render('register', { user: req.cookies.user_id })
 });
+
 app.post('/register', (req, res) => {
   if (retrieveUser(req.body.email, users) || Object.values(req.body).some(entry => entry.length === 0)) {
     return res.status(400).send('Invalid registration fields');
