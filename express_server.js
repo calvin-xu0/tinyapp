@@ -1,6 +1,8 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
+const bcrypt = require('bcryptjs');
+const saltRounds = 10;
 const app = express();
 const PORT = 8080; // default port 8080
 
@@ -8,10 +10,6 @@ app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// const urlDatabase = {
-//   "b2xVn2": "http://www.lighthouselabs.ca",
-//   "9sm5xK": "http://www.google.com"
-// };
 const urlDatabase = {
   "b2xVn2": {
     longURL: "http://www.lighthouselabs.ca",
@@ -27,12 +25,12 @@ const users = {
   "userRandomID": {
     id: "userRandomID", 
     email: "user@example.com", 
-    password: "purple-monkey-dinosaur"
+    password: bcrypt.hashSync("purple-monkey-dinosaur", saltRounds)
   },
  "user2RandomID": {
     id: "user2RandomID", 
     email: "user2@example.com", 
-    password: "dishwasher-funk"
+    password: bcrypt.hashSync("dishwasher-funk", saltRounds)
   }
 }
 
@@ -172,9 +170,9 @@ app.post('/register', (req, res) => {
     return res.status(400).send('Invalid registration fields');
   }
 
-  const {email, password} = req.body;
+  const {email, plainPassword} = req.body;
   const assignedId = generateRandomString();
-  users[assignedId] = {id: assignedId, email, password};
+  users[assignedId] = {id: assignedId, email, password: bcrypt.hashSync(plainPassword, saltRounds)};
 
   res.cookie('user_id', users[assignedId]);
   res.redirect('/urls')
