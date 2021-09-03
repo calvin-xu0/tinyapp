@@ -1,4 +1,4 @@
-function generateRandomString() {
+const generateRandomString = () => {
   let randLower = Math.random().toString(36).slice(-6);
   let randString = "";
   for (const character of randLower) {
@@ -9,7 +9,7 @@ function generateRandomString() {
     }
   }
   return randString;
-}
+};
 
 const retrieveUser = (userEmail, userDb) => {
   return Object.values(userDb).find(user => user.email === userEmail);
@@ -19,10 +19,10 @@ const urlsForUser = (id, urlDatabase) => {
   const userURLs = {};
   for (const shortURL in urlDatabase) {
     if (urlDatabase[shortURL].userID === id) {
-      userURLs[shortURL] = urlDatabase[shortURL]
+      userURLs[shortURL] = urlDatabase[shortURL];
     }
   }
   return userURLs;
 };
 
-module.exports = { generateRandomString, retrieveUser, urlsForUser }
+module.exports = { generateRandomString, retrieveUser, urlsForUser };

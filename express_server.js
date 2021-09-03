@@ -81,7 +81,7 @@ app.get("/urls/new", (req, res) => {
     // redirects to the /login page
     return res.redirect('/login');
   }
-  // if user is logged in: returns HTML with: site header, form (-stretch)
+  // if user is logged in: returns HTML with: site header, form
   res.render("urls_new", { user: req.session.user_id });
 });
 
@@ -105,7 +105,7 @@ app.get("/urls/:shortURL", (req, res) => {
       uniqueVisitors[visit.visitor] = 1;
     }
   }
-  console.log(uniqueVisitors)
+  
   const templateVars = {
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL].longURL,
@@ -115,7 +115,7 @@ app.get("/urls/:shortURL", (req, res) => {
     numUniqueVisitors: Object.keys(uniqueVisitors).length,
     user: req.session.user_id
   };
-  // returns HTML with: site header, short URL, form (-stretch)
+  // returns HTML with: site header, short URL, form
   res.render("urls_show", templateVars);
 });
 
