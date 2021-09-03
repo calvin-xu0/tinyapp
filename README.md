@@ -8,7 +8,7 @@ TinyApp is a full stack web application built with Node and Express that allows 
 An example of a user's personalized list of shortened URLs can be seen above.
 
 !["Example of creating a new TinyURL"](docs/url-edit-page.png)
-Creating a new shortened link is simple and easy.
+Details of your shortened link with a log of visits can be seen on the edit page.
 
 ## Dependencies
 
@@ -18,6 +18,7 @@ Creating a new shortened link is simple and easy.
 - bcrypt
 - body-parser
 - cookie-session
+- method-override
 
 ## Getting Started
 

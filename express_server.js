@@ -32,7 +32,6 @@ const urlDatabase = {
     visitLog: [],
     dateCreated: new Date(Date.now()).toDateString(),
     uniqueVisitors: {}
-    
   }
 };
 
@@ -90,7 +89,7 @@ app.get("/urls/:shortURL", (req, res) => {
   if (!req.session.user_id) {
     // returns HTML with a relevant error message
     return res.status(401).send('Log in to modify short URLs');
-    // if a URL for the given ID does not exist, or current user does not own URL:
+  // if a URL for the given ID does not exist, or current user does not own URL:
   } else if (!urlDatabase[req.params.shortURL] || req.session.user_id.id !== urlDatabase[req.params.shortURL].userID) {
     // returns HTML with a relevant error message
     return res.status(403).send('Short URL not found in your list');
@@ -166,7 +165,7 @@ app.put("/urls/:shortURL", (req, res) => {
   if (!req.session.user_id) {
     // returns HTML with a relevant error message
     return res.status(401).send('Log in to modify short URLs');
-    // if a URL for the given ID does not exist, or current user does not own URL:
+  // if a URL for the given ID does not exist, or current user does not own URL:
   } else if (!urlDatabase[req.params.shortURL] || req.session.user_id.id !== urlDatabase[req.params.shortURL].userID) {
     // returns HTML with a relevant error message
     return res.status(403).send('Short URL not found in your list');
@@ -182,7 +181,7 @@ app.delete("/urls/:shortURL/delete", (req, res) => {
   if (!req.session.user_id) {
     // returns HTML with a relevant error message
     return res.status(401).send('Log in to modify short URLs');
-    // if a URL for the given ID does not exist, or current user does not own URL:
+  // if a URL for the given ID does not exist, or current user does not own URL:
   } else if (!urlDatabase[req.params.shortURL] || req.session.user_id.id !== urlDatabase[req.params.shortURL].userID) {
     // returns HTML with a relevant error message
     return res.status(403).send('Short URL not found in your list');
@@ -231,7 +230,7 @@ app.post('/register', (req, res) => {
   if (Object.values(req.body).some(entry => entry.length === 0)) {
     // returns HTML with a relevant error message
     return res.status(400).send('Invalid registration fields');
-    // if email already exists:
+  // if email already exists:
   } else if (retrieveUser(req.body.email, users)) {
     // returns HTML with a relevant error message
     return res.status(400).send('Email address already in use');
@@ -252,14 +251,6 @@ app.post("/logout", (req, res) => {
   req.session = null;
   // redirects to /urls
   res.redirect('/urls');
-});
-
-app.get("/urls.json", (req, res) => {
-  res.json(urlDatabase);
-});
-
-app.get("/hello", (req, res) => {
-  res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 
 app.listen(PORT, () => {
