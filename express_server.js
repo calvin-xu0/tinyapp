@@ -20,10 +20,12 @@ const urlDatabase = {
   "b2xVn2": {
     longURL: "http://www.lighthouselabs.ca",
     userID: "userRandomID",
+    visits: 0
   },
   "9sm5xK": {
     longURL: "http://www.google.com",
     userID: "user2RandomID",
+    visits: 0
   }
 };
 
@@ -90,6 +92,7 @@ app.get("/urls/:shortURL", (req, res) => {
   const templateVars = {
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL].longURL,
+    visits: urlDatabase[req.params.shortURL].visits,
     user: req.session.user_id
   };
   // returns HTML with: site header, short URL, form (-stretch)
@@ -103,6 +106,7 @@ app.get("/u/:shortURL", (req, res) => {
     return res.status(404).send('Invalid short URL');
   }
   // if URL for the given ID exists:
+  urlDatabase[req.params.shortURL].visits++;
   const longURL = urlDatabase[req.params.shortURL].longURL;
   // redirects to the corresponding long URL
   res.redirect(longURL);
@@ -119,7 +123,8 @@ app.post("/urls", (req, res) => {
   // generates a short URL, saves it, and associates it with the user
   urlDatabase[genShortURL] = {
     longURL: req.body.longURL,
-    userID: req.session.user_id.id
+    userID: req.session.user_id.id,
+    visits: 0
   };
   // redirects to /urls/:id, where :id matches the ID of the newly saved URL
   res.redirect(`/urls/${genShortURL}`);
