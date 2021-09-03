@@ -4,9 +4,11 @@ TinyApp is a full stack web application built with Node and Express that allows 
 
 ## Final Product
 
-!["screenshot description"](#)
+![Example of a user's list of shortened URLs](docs/url-page.png)
+An example of a user's personalized list of shortened URLs can be seen above.
 
-!["screenshot description"](#)
+!["Example of creating a new TinyURL"](docs/url-edit-page.png)
+Creating a new shortened link is simple and easy.
 
 ## Dependencies
 
