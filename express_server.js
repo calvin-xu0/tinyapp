@@ -21,13 +21,15 @@ const urlDatabase = {
     longURL: "http://www.lighthouselabs.ca",
     userID: "userRandomID",
     visits: 0,
-    visitLog: []
+    visitLog: [],
+    dateCreated: new Date(Date.now()).toDateString(undefined)
   },
   "9sm5xK": {
     longURL: "http://www.google.com",
     userID: "user2RandomID",
     visits: 0,
-    visitLog: []
+    visitLog: [],
+    dateCreated: new Date(Date.now()).toDateString(undefined)
   }
 };
 
@@ -127,7 +129,7 @@ app.get("/u/:shortURL", (req, res) => {
   }
   logCookie = req.session.user_id ? req.session.user_id : req.session.visitor_id;
 
-  const logElement = { time: Date(Date.now()).toLocaleString(), visitor: logCookie };
+  const logElement = { time: Date(Date.now()).toString(), visitor: logCookie };
   urlDatabase[req.params.shortURL].visitLog.push(logElement);
   const longURL = urlDatabase[req.params.shortURL].longURL;
   // redirects to the corresponding long URL
@@ -147,7 +149,8 @@ app.post("/urls", (req, res) => {
     longURL: req.body.longURL,
     userID: req.session.user_id.id,
     visits: 0,
-    visitLog: []
+    visitLog: [],
+    dateCreated: new Date(Date.now()).toDateString(undefined)
   };
   // redirects to /urls/:id, where :id matches the ID of the newly saved URL
   res.redirect(`/urls/${genShortURL}`);
