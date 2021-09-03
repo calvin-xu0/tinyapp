@@ -22,14 +22,17 @@ const urlDatabase = {
     userID: "userRandomID",
     visits: 0,
     visitLog: [],
-    dateCreated: new Date(Date.now()).toDateString(undefined)
+    dateCreated: new Date(Date.now()).toDateString(),
+    uniqueVisitors: {}
   },
   "9sm5xK": {
     longURL: "http://www.google.com",
     userID: "user2RandomID",
     visits: 0,
     visitLog: [],
-    dateCreated: new Date(Date.now()).toDateString(undefined)
+    dateCreated: new Date(Date.now()).toDateString(),
+    uniqueVisitors: {}
+    
   }
 };
 
@@ -93,7 +96,7 @@ app.get("/urls/:shortURL", (req, res) => {
     return res.status(403).send('Short URL not found in your list');
   }
   // if user is logged in and owns the URL for the given ID:
-  const uniqueVisitors = {};
+  const uniqueVisitors = urlDatabase[req.params.shortURL].uniqueVisitors;
   const visitLog = urlDatabase[req.params.shortURL].visitLog;
   for (const visit of visitLog) {
     if (uniqueVisitors[visit.visitor]) {
@@ -150,7 +153,8 @@ app.post("/urls", (req, res) => {
     userID: req.session.user_id.id,
     visits: 0,
     visitLog: [],
-    dateCreated: new Date(Date.now()).toDateString(undefined)
+    dateCreated: new Date(Date.now()).toDateString(),
+    uniqueVisitors: {}
   };
   // redirects to /urls/:id, where :id matches the ID of the newly saved URL
   res.redirect(`/urls/${genShortURL}`);

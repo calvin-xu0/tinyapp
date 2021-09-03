@@ -20,6 +20,8 @@
           <th scope="col">Short URL</th>
           <th scope="col">Long URL</th>
           <th scope="col">Date Created</th>
+          <th scope="col">Visits</th>
+          <th scope="col">Unique Visits</th>
           <th scope="col">Edit</th>
           <th scope="col">Delete</th>
         </tr>
@@ -30,6 +32,8 @@
             <td><%= url %></td>
             <td><%= urls[url].longURL %></td>
             <td><%= urls[url].dateCreated %></td>
+            <td><%= urls[url].visits %></td>
+            <td><%= Object.keys(urls[url].uniqueVisitors).length %></td>
             <td><form method="GET" action="/urls/<%= url %>">
               <button type="submit" class="btn btn-primary">Edit</button>
             </form></td>
