@@ -23,8 +23,29 @@
           </a>
         </p>
           <b>Times visited:</b> <%= visits %>
+          <b>Unique visitors: <%= numUniqueVisitors %>
+            </b>
         </p>
       </div>
+
+      <h5 class="text-center">Visit Log</h5>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th scope="col" class="w-50">Time Visited</th>
+            <th scope="col" class="w-50">Visitor</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% for(let visit of visitLog) { %>
+            <tr>
+              <td><%= visit.time %></td>
+              <td><%= typeof(visit.visitor) === 'string' ? visit.visitor : visit.visitor.id %></td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+
       <div class="card-footer text-muted mx-auto">
         <h2>Edit</h2>
         <form class="form-inline" method="POST" action="/urls/<%= shortURL %>?_method=PUT">

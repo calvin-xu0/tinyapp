@@ -85,17 +85,28 @@ app.get("/urls/:shortURL", (req, res) => {
   if (!req.session.user_id) {
     // returns HTML with a relevant error message
     return res.status(401).send('Log in to modify short URLs');
-  // if a URL for the given ID does not exist, or current user does not own URL:
+    // if a URL for the given ID does not exist, or current user does not own URL:
   } else if (!urlDatabase[req.params.shortURL] || req.session.user_id.id !== urlDatabase[req.params.shortURL].userID) {
     // returns HTML with a relevant error message
     return res.status(403).send('Short URL not found in your list');
   }
   // if user is logged in and owns the URL for the given ID:
+  const uniqueVisitors = {};
+  const visitLog = urlDatabase[req.params.shortURL].visitLog;
+  for (const visit of visitLog) {
+    if (uniqueVisitors[visit.visitor]) {
+      uniqueVisitors[visit.visitor]++;
+    } else {
+      uniqueVisitors[visit.visitor] = 1;
+    }
+  }
+  console.log(uniqueVisitors)
   const templateVars = {
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL].longURL,
     visits: urlDatabase[req.params.shortURL].visits,
-    visitLog: urlDatabase[req.params.shortURL].visitLog,
+    visitLog,
+    numUniqueVisitors: Object.keys(uniqueVisitors).length,
     user: req.session.user_id
   };
   // returns HTML with: site header, short URL, form (-stretch)
@@ -115,7 +126,8 @@ app.get("/u/:shortURL", (req, res) => {
     req.session.visitor_id = req.ip;
   }
   logCookie = req.session.user_id ? req.session.user_id : req.session.visitor_id;
-  const logElement = {time: Date(Date.now()).toLocaleString(), visitor: logCookie};
+
+  const logElement = { time: Date(Date.now()).toLocaleString(), visitor: logCookie };
   urlDatabase[req.params.shortURL].visitLog.push(logElement);
   const longURL = urlDatabase[req.params.shortURL].longURL;
   // redirects to the corresponding long URL
@@ -146,7 +158,7 @@ app.put("/urls/:shortURL", (req, res) => {
   if (!req.session.user_id) {
     // returns HTML with a relevant error message
     return res.status(401).send('Log in to modify short URLs');
-  // if a URL for the given ID does not exist, or current user does not own URL:
+    // if a URL for the given ID does not exist, or current user does not own URL:
   } else if (!urlDatabase[req.params.shortURL] || req.session.user_id.id !== urlDatabase[req.params.shortURL].userID) {
     // returns HTML with a relevant error message
     return res.status(403).send('Short URL not found in your list');
@@ -162,7 +174,7 @@ app.delete("/urls/:shortURL/delete", (req, res) => {
   if (!req.session.user_id) {
     // returns HTML with a relevant error message
     return res.status(401).send('Log in to modify short URLs');
-  // if a URL for the given ID does not exist, or current user does not own URL:
+    // if a URL for the given ID does not exist, or current user does not own URL:
   } else if (!urlDatabase[req.params.shortURL] || req.session.user_id.id !== urlDatabase[req.params.shortURL].userID) {
     // returns HTML with a relevant error message
     return res.status(403).send('Short URL not found in your list');
@@ -211,7 +223,7 @@ app.post('/register', (req, res) => {
   if (Object.values(req.body).some(entry => entry.length === 0)) {
     // returns HTML with a relevant error message
     return res.status(400).send('Invalid registration fields');
-  // if email already exists:
+    // if email already exists:
   } else if (retrieveUser(req.body.email, users)) {
     // returns HTML with a relevant error message
     return res.status(400).send('Email address already in use');
